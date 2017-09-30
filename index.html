@@ -1,0 +1,487 @@
+﻿<!doctype html>
+<html class="no-js" lang="ru" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Окироя</title>
+    <link rel="stylesheet" href="/content/css/foundation.min.css">
+    <link rel="stylesheet" href="/content/css/foundation-icons.css">
+    <link rel="stylesheet" href="/content/css/app.css">
+  </head>
+  <body>
+	<div class="off-canvas-wrapper" data-bind="component: { name: 'main'}" id="main">
+		<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>			
+			<div class="off-canvas position-right" id="offCanvasHelp" data-off-canvas data-position="right">
+                <button data-close="" type="button" aria-label="Закрыть" class="close-button">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <div data-bind="component: { name: 'common/help', params: { help: currentControlSet().help, element: '#offCanvasHelp' } }"></div>
+            </div>
+			<div class="off-canvas-content" data-off-canvas-content>  
+                <div class="row expanded">
+                    <div class="medium-12 columns">
+                        <div class="title-bar">
+                            <div class="title-bar-left">
+                                <a href="/" class="title-bar-title" data-bind="click: navigate">Окироя</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>              
+                <div class="inner-wrap">                        
+                    <div class="show-for-small-only">
+                        <button class="menu-icon" type="button" data-open="offCanvasLeft"></button>
+                    </div>                
+                    <div class="left-block show-for-medium">
+                        <div data-bind="component: { name: 'navigation/menu', params: { items: leftMenu, css: 'icon-top vertical section-nav', level: currentLevel() } }"></div>
+                    </div>                    
+                    <div class="row">
+                        <div class="medium-12 columns">
+                            <div class="top-menu" data-bind="component: { name: 'navigation/menu', params: { items: currentControlSet().topMenu } }"></div>
+                        </div>
+                    </div>
+                    <div class="row expanded">
+                        <div class="medium-12 columns main-block">
+                            <!--ko foreach: currentControlSet().controls -->
+                            <div data-bind="component: { name: ''+ $data }"></div>
+                            <!--/ko-->
+                        </div>
+                    </div>
+                </div>     
+			</div>
+		</div>
+	</div>   
+    <script data-main="/content/js/app" src="/content/js/libs/require.js"></script>
+	<script type="text/html" id="navigation-menu">
+        <div class="menu-centered">
+            <ul class="menu clearfix" data-bind="css: menuCss(), foreach: currentItems">
+                <li>
+                    <a data-bind="attr: { href: url }, click: $parent.navigate">                        
+                        <!-- ko if: $parent.hasImage($data) -->
+                        <img data-bind="attr: { src: imageSrc, alt: title }" />
+                        <!-- /ko -->
+                        <span data-bind="text: title"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+	</script>
+    <script type="text/html" id="dashboard-home">
+        <div class="row">
+            <div class="medium-8 columns">
+                <p>Здесь будет панель dashboard-home</p>
+            </div>
+            <div class="medium-4 columns">
+            </div>
+        </div>          
+      </script>
+    <script type="text/html" id="project-list">
+          <div class="row js-modal" data-bind="attr: { 'id': 'modal_container_' + moduleId }">
+              <div class="medium-12 columns">
+                  <p>Проекты</p>
+                  <button class="small hollow button" data-bind="attr: { 'data-open': 'modal_' + moduleId }">Добавить</button>
+                  <div class="tiny reveal" data-bind="attr: { 'id': 'modal_' + moduleId }" data-reveal>
+                      <button class="close-button" data-close aria-label="Закрыть" type="button">
+                          <span aria-hidden="true">&times;</span>
+                      </button>                      
+                      <form>
+                          <div class="row">
+                              <div class="small-12 columns">
+                                  <p>Добавьте адрес сайта</p>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="small-3 columns">
+                                  <label data-bind="attr: { 'for': 'modal_label_site' + moduleId }" class="text-right middle">Адрес</label>
+                              </div>
+                              <div class="small-9 columns">
+                                  <input type="text" data-bind="attr: { 'id': 'modal_label_site' + moduleId }, value: newSiteUrl" autocomplete="off" placeholder="Url">
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="small-9 large-offset-3 columns">
+                                  <div class="button-group">
+                                      <a class="hollow button" data-bind="click: addSite.bind($data, { tabs: 'tabs_container_' + moduleId, close: '#modal_close_button_' + moduleId })">Добавить</a>
+                                      <a class="alert hollow button" data-bind="attr: { 'id': 'modal_close_button_' + moduleId }" data-close>
+                                          <span class="show-for-sr">Отмена</span>
+                                          <span aria-hidden="true">&times;</span>
+                                      </a>
+                                  </div>
+                              </div>
+                          </div>
+                      </form>
+                  </div>
+                  <!--ko initModal: 'modal_container_' + moduleId--><!--/ko-->
+              </div>
+          </div>
+          <div class="row collapse js-tabs" data-bind="attr: { 'id': 'tabs_container_' + moduleId }">
+              <div class="medium-3 columns">
+                  <ul class="tabs vertical" data-tabs data-match-height data-bind="foreach: sites, attr: { 'id': 'tabs_' + moduleId }">
+                      <li class="tabs-title " data-bind="css: $parent.isActive($index(), 'is-active')">
+                          <a data-bind="attr: { href: '#panel_' + $parent.moduleId + '_' + id, 'aria-selected': $parent.isActive($index(), 'true') }, text: name"></a>
+                      </li>
+                  </ul>
+              </div>
+              <div class="medium-9 columns">
+                  <div class="tabs-content vertical" data-bind="foreach: sites, attr: { 'data-tabs-content': 'tabs_' + moduleId }">
+                      <div class="tabs-panel " data-bind="css: $parent.isActive($index(), 'is-active'), attr: { 'id': 'panel_' + $parent.moduleId + '_' + id } ">
+                          <div data-bind="component: { name: 'dashboard/project', params: { id: id } }"></div>
+                      </div>
+                  </div>
+              </div>
+              <!--ko initTabs: 'tabs_container_' + moduleId--><!--/ko-->
+          </div>
+    </script>
+    <script type="text/html" id="dashboard-project">
+        <div class="row">
+            <div class="medium-12 columns">
+                <h2 data-bind="text: projectName"></h2>
+                <hr />
+                <p>Описание проекта</p>
+            </div>
+        </div>  
+        <div class="row">
+            <div class="medium-12 columns">
+                <div class="row small-up-1 medium-up-2 large-up-4">
+                    <div class="column">
+                        <div class="stat-block">
+                            <div class="stat-block-top">                                
+                                <div class="stat">30</div>
+                                <p>Проиндексированных страниц</p>
+                            </div>
+                            <div class="stat-block-bottom"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="medium-12 columns">
+                <div class="row small-up-1 medium-up-2 large-up-4">
+                    <div class="column">
+                        <div class="action-block clearfix">
+                            <a data-bind="attr: { href: newTaskUrl }" class="title js-navigate">
+                                <span>Создать задачу</span>
+                                <span class="image">
+                                    <i class="fi-plus large" title="Создать"></i>
+                                </span>
+                            </a>                                                
+                        </div>                        
+                    </div>
+                    <div class="column">
+                        <div class="action-block clearfix">
+                            <a data-bind="attr: { href: schedulerUrl }" class="title js-navigate">
+                                <span>Запланировать задачу</span>
+                                <span class="image">
+                                    <i class="fi-clock large" title="Запланировать"></i>
+                                </span>
+                            </a>                            
+                        </div>  
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+              <div class="medium-12 columns">
+                  <div data-bind="grid: gridOptions"></div>
+              </div>
+          </div>
+      </script>
+      <script type="text/html" id="project-grid-row">
+          <td data-bind="text: id"></td>
+          <td data-bind="text: name"></td>
+      </script>
+    <script type="text/html" id="common-help">
+          <br />
+          <!--ko foreach: cite -->
+          <blockquote data-bind="text: $data"></blockquote>
+          <hr />
+          <!--/ko-->
+      </script>
+    <script type="text/html" id="common-grid">
+          <div class="row">
+              <div class="medium-12 columns">
+                  <table class="hover">
+                      <colgroup data-bind="foreach: columns">
+                          <col />
+                      </colgroup>
+                      <thead>
+                          <tr data-bind="foreach: columns">
+                              <th>
+                                  <a href="#" data-bind="columnElement: $data, click: $parent.sort"></a>
+                              </th>
+                          </tr>
+                      </thead>
+                      <!--ko if: loading -->
+                      <tbody>
+                          <tr>
+                              <td data-bind="attr: { 'colspan': columnCount() }">
+                                  <div class="loading"></div>
+                              </td>
+                          </tr>
+                      </tbody>
+                      <!--/ko-->
+                      <!--ko ifnot: hasResult -->
+                      <tbody>
+                          <tr>
+                              <td data-bind="attr: { 'colspan': columnCount() }">Нет данных</td>
+                          </tr>
+                      </tbody>
+                      <tfoot>
+                          <tr>
+                              <td data-bind="attr: { 'colspan': columnCount() }">
+                                  <div class="clearfix">
+                                      <div class="float-right">
+                                          <div class="refresh">
+                                              <a data-bind="click: refresh"><i class="fi-refresh" title="Обновить"></i></a>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </td>
+                          </tr>
+                      </tfoot>
+                      <!--/ko-->
+                      <!--ko if: hasResult -->
+                      <tbody data-bind="foreach: data">
+                          <!--ko if: $parent.hasCustomRowTemplate -->
+                          <tr data-bind="template: { name: $parent.rowTemplate, data: $data, afterRender: $parent.showRowTemplate }"></tr>
+                          <!--/ko-->
+                          <!--ko ifnot: $parent.hasCustomRowTemplate -->
+                          <tr data-bind="gridElement: $data"></tr>
+                          <!--/ko-->
+                      </tbody>
+                      <tfoot>
+                          <tr>
+                              <td data-bind="attr: { 'colspan': columnCount() } ">
+                                  <div class="row">
+                                      <div class="medium-4 columns" data-bind="visible: showPager">
+                                          <ul class="pagination text-center" role="navigation" aria-label="Pagination">
+                                              <li class="pagination-previous disabled" data-bind="visible: !prevPageEnabled()">
+                                                  <span class="show-for-sr">Предыдущая страница</span>
+                                              </li>
+                                              <li class="pagination-previous" data-bind="visible: !prevPageEnabled()">
+                                                  <a href="#" aria-label="Предыдущая страница" data-bind="click: goToPrevPage, visible: prevPageEnabled()">
+                                                      <span class="show-for-sr">Предыдущая страница</span>
+                                                  </a>
+                                              </li>
+                                              <li class="current" data-bind="text: page"><span class="show-for-sr">Текущая страница</span></li>
+                                              <li class="pagination-next disabled" data-bind="visible: !nextPageEnabled()">
+                                                  <span class="show-for-sr">Следующая страница</span>
+                                              </li>
+                                              <li class="pagination-next" data-bind="visible: !prevPageEnabled()">
+                                                  <a href="#" aria-label="Следующая страница" data-bind="click: goToNextPage, visible: nextPageEnabled()">
+                                                      <span class="show-for-sr">Следующая страница</span>
+                                                  </a>
+                                              </li>
+                                          </ul>
+                                      </div>
+                                      <div class="medium-4 columns" data-bind="visible: showItemOnPage">
+                                          <label>
+                                              Показывать по &nbsp;
+                                              <select class="w30p" data-bind="options: pageSizes, value: pageSize"></select>
+                                          </label>
+                                      </div>
+                                      <div class="medium-4 columns clearfix">
+                                          <div class="float-right">
+                                              <span data-bind="text: 'Показано ' + from() + ' - ' + to() + ' из ' + total()"></span>
+                                              <div class="refresh">
+                                                  <a data-bind="click: refresh"><i class="fi-refresh" title="Обновить"></i></a>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </td>
+                          </tr>
+                      </tfoot>
+                      <!--/ko-->
+                  </table>
+              </div>
+          </div>
+      </script>
+      <script type="text/html" id="dashboard-task">
+          <div class="row">
+              <div class="medium-12 columns">
+                  Task
+              </div>
+          </div>
+      </script>
+      <script type="text/html" id="task-wizard">
+          <div class="row">
+              <div class="large-11 medium-offset-1 end columns">
+                  <div data-bind="component: { name: 'common/sectionView', params: sectionContainer }"></div>
+              </div>
+          </div>
+      </script>
+      <script type="text/html" id="dashboard-report">
+          <div class="row">
+              <div class="medium-12 columns">
+                  <h2>Отчет</h2>
+                  <p data-bind="text: name"></p>
+              </div>
+          </div>
+          <hr />
+          <div class="row">
+              <div class="medium-2 columns">
+                  <p>Информация</p>
+                  <span data-bind="date: date"></span>
+                  <br />
+                  <span data-bind="text: owner"></span>
+                  <div data-sticky-container>
+                      <nav class="sticky" data-bind="attr: { 'data-anchor': id }" data-sticky data-sticky-on="medium">
+                          <ul class="simple" data-magellan>
+                              <li data-bind="attr: { 'id': id }">Разделы</li>                              
+                              <!--ko foreach: sections -->
+                              <li>
+                                  <a data-bind="attr: { href: '#' + id }, text: title"></a>
+                              </li>
+                              <!--/ko -->
+                          </ul>
+                      </nav>
+                  </div>
+              </div>
+              <div class="medium-10 columns sections">
+                  <div data-bind="component: { name: 'common/sectionView', params: sectionContainer }"></div>
+              </div>
+          </div>
+      </script>
+      <script type="text/html" id="common-section-view">
+          <div class="wizard-rect" data-bind="if: showTitle">
+              <span data-bind="text: title"></span>
+          </div>
+          <table data-bind="css: containerClass">
+              <tbody data-bind="foreach: sections">
+                  <tr data-bind="attr: { id: id }">
+                      <td class="line">                          
+                          <div class="circle"></div>
+                      </td>
+                      <td>
+                          <div data-bind="component: { name: sectionItem, params: sectionParams }"></div>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </script>
+      <script type="text/html" id="task-wizard-step-selectTaskType">
+          <div data-bind="component: { name: 'common/box', params: { title: 'Выбор задачи', data: taskTypes } }">
+              <div class="row">
+                  <div class="medium-12 columns">
+                      <div class="row small-up-1 medium-up-3 large-up-3">
+                          <!--ko foreach: $data-->
+                          <div class="column">
+                              <div data-bind="component: { name: 'common/tileView', params: $data }">
+                              </div>
+                          </div>
+                          <!--/ko-->
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </script>
+      <script type="text/html" id="task-wizard-step-defineParams">
+          <div data-bind="if: visible">
+              <div data-bind="component: { name: 'common/box', params: { title: 'Заполнение параметров', data: $data } }">
+                  <div class="row">
+                      <div class="medium-12 columns">
+                          <!--ko if: hasControl-->
+                          <div data-bind="component: { name: control }">
+                          </div>
+                          <!--/ko-->
+                          <!--ko ifnot: hasControl-->
+                          <p>Задача не имеет параметров</p>
+                          <input type="hidden" data-bind="taskSetParams: []" />
+                          <!--/ko-->
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </script>
+      <script type="text/html" id="task-wizard-step-launch">
+          <div data-bind="if: visible">
+              <div data-bind="component: { name: 'common/box', params: { title: 'Запуск', data: $data } }">
+                  <br />
+                  <div class="row">
+                      <div class="medium-3 columns">
+                          <div class="button-group">
+                              <button class="small hollow button" data-bind="click: taskStart">Запустить</button>
+                              <button class="small alert hollow button" data-bind="click: taskCancel">Отмена</button>
+                          </div>
+                      </div>
+                      <div class="medium-5 columns end">
+                          <div data-bind="visible: taskNotStarted">
+                              <span data-bind="text: taskName"></span>
+                              <span data-bind="visible: taskHasParams"> с параметрами:</span>
+                              <span data-bind="visible: taskHasNoParams"> без параметров</span>
+                              <div data-bind="foreach: taskParams">
+                                  <p data-bind="text: $data"></p>
+                              </div>
+                          </div>                              
+                          <span data-bind="text: taskStatus, slideVisible: taskStarted"></span>                      
+                      </div> 
+                  </div>
+              </div>
+          </div>
+      </script>
+      <script type="text/html" id="common-box">
+          <div class="box">
+              <div class="box-icon">
+                  <span data-bind="text: title"></span>
+              </div>
+              <div class="info">
+                  <!-- ko template: { nodes: $componentTemplateNodes, data: controlData } --><!-- /ko -->
+              </div>
+          </div>
+      </script>
+      <script type="text/html" id="task-definitions-catalog-diff">
+          <form>
+              <div class="row">
+                  <div class="medium-3 columns">
+                      <label data-bind="attr: { for: id }" class="right">Отсылать отчет</label>
+                  </div>
+                  <div class="medium-9 columns">
+                      <input type="checkbox" data-bind="attr: { id: id }, checked: sendEmail" />
+                      <input type="hidden" data-bind="taskSetParams: taskParams" />
+                  </div>
+              </div>
+          </form>
+      </script>
+      <script type="text/html" id="report-catalog-diff">
+          <dl class="indent" data-bind="template: { name: 'report-catalog-diff-tree', foreach: items }"></dl>
+      </script>
+      <script type="text/html" id="report-catalog-diff-tree">
+          <dd>
+              <span>
+                  <i data-bind="css: iconClass, attr: { title: iconText }"></i>
+              </span>
+              <span data-bind="text: name"></span>
+              <!--ko if: hasChildren -->
+              <dl class="indent" data-bind="template: { name: 'report-catalog-diff-tree', foreach: children }"></dl>
+              <!--/ko-->
+          </dd>
+      </script>
+      <script type="text/html" id="common-tile-view">
+          <div class="tile-card-container" data-bind="css: status">
+              <div class="active-icon">
+                  <i class="fi-check"></i>
+              </div>
+              <div class="tile-card">
+                  <a data-bind="click: toggleActive">
+                      <div class="tile-icon" data-bind="css: css"></div>
+                      <div class="tile-content">
+                          <span data-bind="text: name"></span>
+                          <p data-bind="text: description"></p>
+                      </div>
+                  </a>
+              </div>
+          </div>
+      </script>
+      <script type="text/html" id="common-404">
+          <div class="row">
+              <div class="medium-12 columns">
+                  <p>Запрашиваемая страница не найдена</p>
+              </div>
+          </div>
+      </script>
+</body>
+</html>
